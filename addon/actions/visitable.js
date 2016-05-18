@@ -74,17 +74,27 @@ function appendQueryParams(path, queryParams) {
  * // visits '/users/1?name=john'
  * page.visit({ user_id: 1, name: 'john' });
  *
+ * @example
+ *
+ * const page = PageObject.create({
+ *   visit: PageObject.visitable('/users/:user_id', { user_id: '1' })
+ * });
+ *
+ * // visits '/users/1'
+ * page.visit();
+ *
  * @param {string} path - Full path of the route to visit
+ * @param {Object} defaultDynamicSegmentsAndQueryParams - Default values to fill in dynamic segments or query params
  * @return {Descriptor}
  *
- * @throws Will throw an error if dynamic segments are not filled
+ * @throws Will throw an error if dynamic segments are not filled and there are no defaults
  */
-export function visitable(path) {
+export function visitable(path, defaultDynamicSegmentsAndQueryParams = {}) {
   return {
     isDescriptor: true,
 
     value(dynamicSegmentsAndQueryParams = {}) {
-      var params = merge({}, dynamicSegmentsAndQueryParams);
+      var params = merge(defaultDynamicSegmentsAndQueryParams, dynamicSegmentsAndQueryParams);
       var fullPath = fillInDynamicSegments(path, params);
 
       fullPath = appendQueryParams(fullPath, params);
